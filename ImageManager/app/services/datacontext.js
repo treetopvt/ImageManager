@@ -8,26 +8,60 @@
     function datacontext(common) {
         var $q = common.$q;
 
+        var getLogFn = common.logger.getLogFn;
+        var log = getLogFn(serviceId);
+
+        configureBreeze();
+
+        var useLocalHost = true;
+
+        var host = useLocalHost ? "http://localhost:64261" : "http://www.bullsbluff.com/ImageManager";
+        var serviceName = host + "/breeze/Images";
+
+        var manager = new breeze.EntityManager(serviceName);
+
         var service = {
-            getPeople: getPeople,
-            getMessageCount: getMessageCount
+            getAllImages: getAllImages,
+            reset: reset
         };
 
         return service;
 
         function getMessageCount() { return $q.when(72); }
 
-        function getPeople() {
-            var people = [
-                { firstName: 'John', lastName: 'Papa', age: 25, location: 'Florida' },
-                { firstName: 'Ward', lastName: 'Bell', age: 31, location: 'California' },
-                { firstName: 'Colleen', lastName: 'Jones', age: 21, location: 'New York' },
-                { firstName: 'Madelyn', lastName: 'Green', age: 18, location: 'North Dakota' },
-                { firstName: 'Ella', lastName: 'Jobs', age: 18, location: 'South Dakota' },
-                { firstName: 'Landon', lastName: 'Gates', age: 11, location: 'South Carolina' },
-                { firstName: 'Haley', lastName: 'Guthrie', age: 35, location: 'Wyoming' }
-            ];
-            return $q.when(people);
+        function getAllImages() {
+            var query = breeze.EntityQuery.from("GetImages");
+            log("Getting Images");
+            return manager.executeQuery(query).then(success);
+
+            function success(data) {
+                log("Retrieved " + data.results.length);
+                return data.results;
+            }
+
+        }
+
+        function reset() {
+            manager.clear();
+            var deferred = Q.defer();
+            $http.post(serviceName + '/reset')
+             .then(resetSuccess, resetFail);
+            return deferred.promise;
+            function resetSuccess() {
+                log("Database reset");
+                deferred.resolve();
+            }
+            function resetFail() {
+                log("Database reset failed");
+                deferred.reject(new Error("Database reset failed"));
+            }
+        }
+
+        function configureBreeze() {
+            // configure to use the model library for Angular
+            breeze.config.initializeAdapterInstance("modelLibrary", "backingStore", true);
+            // configure to use camelCase
+            breeze.NamingConvention.camelCase.setAsDefault();
         }
     }
 })();

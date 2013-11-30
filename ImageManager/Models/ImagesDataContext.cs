@@ -81,9 +81,10 @@ namespace ImageManager.Models
             {
                 using (var xwriter = new XmlTextWriter(swriter))
                 {
-                    // edmModel.TryWriteCsdl(xwriter, out errors);
+                    //edmModel.TryWriteCsdl(xwriter, out errors);
+                    
                     // CsdlWriter.TryWriteCsdl(edmModel, xwriter, out errors);
-                    EdmxWriter.TryWriteEdmx(edmModel, xwriter, EdmxTarget.OData, out errors);
+                    //EdmxWriter.TryWriteEdmx(edmModel, xwriter, EdmxTarget.OData, out errors);
                     csdl = swriter.ToString();
 
                 }

@@ -19,7 +19,7 @@
         activate();
 
         function activate() {
-            var promises = [getMessageCount(), getPeople()];
+            var promises = [];
             common.activateController(promises, controllerId)
                 .then(function () { log('Activated Dashboard View'); });
         }

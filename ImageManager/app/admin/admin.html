@@ -6,6 +6,13 @@
                     <div data-cc-widget-header title="{{vm.title}}"></div>
                     <div class="widget-content user">
                         <h3>TODO: Implement Admin Features</h3>
+                        <div data-ng-repeat="image in vm.Images">
+                            {{image.fileName}}
+                        </div>
+
+                        <div data-ng-show="vm.errorMessage">
+                            {{vm.errorMessage}}
+                        </div>
                     </div>
                     <div class="widget-foot">
                         <div class="clearfix"></div>
