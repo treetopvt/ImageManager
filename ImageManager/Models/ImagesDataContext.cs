@@ -84,7 +84,7 @@ namespace ImageManager.Models
                     //edmModel.TryWriteCsdl(xwriter, out errors);
                     
                     // CsdlWriter.TryWriteCsdl(edmModel, xwriter, out errors);
-                    //EdmxWriter.TryWriteEdmx(edmModel, xwriter, EdmxTarget.OData, out errors);
+                    EdmxWriter.TryWriteEdmx(edmModel, xwriter, EdmxTarget.OData, out errors);
                     csdl = swriter.ToString();
 
                 }
