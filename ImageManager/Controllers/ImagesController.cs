@@ -1,5 +1,6 @@
 ﻿using Breeze.WebApi2;
-using ImageManager.Models;
+using ImageManager.DataAccess;
+using ImageManager.DataModel;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,23 +20,23 @@ namespace ImageManager.Controllers
 {
     //ApiController
     [BreezeController]
-    public class ImagesController : EntitySetController<Models.ImageModel, Guid>
+    public class ImagesController : EntitySetController<ImageModel, Guid>
     {
 
-        private static ImagesDataContext _ImageContext = new ImagesDataContext(GetImagePath(IsDebug()));
+        private static ImageManagerRepository _ImageRepository = new ImageManagerRepository(GetImagePath(IsDebug()));
         // GET api/<controller>
         [Queryable(AllowedQueryOptions = AllowedQueryOptions.All)]
-        public IQueryable<Models.ImageModel> GetImages()
+        public IQueryable<ImageModel> GetImages()
         {
 
             //return new string[] { "value1", "value2" };
-            return _ImageContext.Images;
+            return _ImageRepository.Images;
         }
 
         [HttpGet]
         public string Metadata()
         {
-            return _ImageContext.Metadata();
+            return _ImageRepository.MetaData;
         }
 
         // GET api/<controller>/5
@@ -59,7 +60,7 @@ namespace ImageManager.Controllers
         [Queryable]
         public SingleResult<ImageModel> GetImageModel([FromODataUri] Guid key)
         {
-            return SingleResult.Create(_ImageContext.Images.Where(imagemodel => imagemodel.Id == key).AsQueryable());
+            return SingleResult.Create(_ImageRepository.Images.Where(imagemodel => imagemodel.Id == key).AsQueryable());
         }
 
         // POST api/<controller>
