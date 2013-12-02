@@ -6,11 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-
-
-namespace ImageManager.Models
+namespace ImageManager.DataModel
 {
-    public partial class ImageModel
+    public class ImageModel
     {
         public ImageModel()
         {
@@ -25,9 +23,7 @@ namespace ImageManager.Models
             GetExifs(file);
         }
 
-        [Key]
         public Guid Id { get; set; }
-        [Required]
         public string FileName { get; set; }
         public string RelativePath { get; set; }
         public string DirectoryName { get; set; }
