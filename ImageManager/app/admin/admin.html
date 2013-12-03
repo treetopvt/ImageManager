@@ -1,23 +1,32 @@
 ﻿<section class="mainbar" data-ng-controller="admin as vm">
     <section class="matter">
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="widget wviolet">
-                    <div data-cc-widget-header title="{{vm.title}}"></div>
-                    <div class="widget-content user">
-                        <h3>TODO: Implement Admin Features</h3>
-                        <div data-ng-repeat="image in vm.Images">
-                            {{image.fileName}}
-                        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <ul class="list-unstyled list-flow-tight">
+                        <li class="" data-ng-repeat="image in vm.Images" data-ng-click="vm.ShowImage(image)">
+                            <div class="well well-sm">
+                                <img data-ng-src="{{vm.getImageThumbnail(image)}}" alt="image.fileName" class="img img-thumbnail img-responsive" />
+                                <!--<button data-ng-click="vm.getImageThumbnail(image)" class="btn btn-default"></button>-->
+                                <!--<img ng-src="{{image.thumbnail}}" />-->
+                                {{image.fileName}}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-7">
+                    <img alt="No Image Selected" class="img img-responsive" data-ng-src="{{vm.CurrentImage}}" />
+                </div>
 
-                        <div data-ng-show="vm.errorMessage">
-                            {{vm.errorMessage}}
-                        </div>
-                    </div>
-                    <div class="widget-foot">
-                        <div class="clearfix"></div>
+                <div class="row">
+                    <div data-ng-show="vm.errorMessage">
+                        {{vm.errorMessage}}
                     </div>
                 </div>
+            </div>
+
+            <div class="widget-foot">
+                <div class="clearfix"></div>
             </div>
         </div>
     </section>

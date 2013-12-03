@@ -18,7 +18,8 @@ namespace ImageManager.DataModel
         {
             Id = Guid.NewGuid();//will have to change to a DB entry later?
             FileName = file.Name;
-            RelativePath = file.FullName.Replace(rootPath, "");
+            var rtPath = rootPath.TrimEnd('\\');
+            RelativePath = file.DirectoryName.Replace(rtPath, "");//gets relative directory structure
             DirectoryName = file.Directory.Name;
             GetExifs(file);
         }
@@ -28,6 +29,7 @@ namespace ImageManager.DataModel
         public string RelativePath { get; set; }
         public string DirectoryName { get; set; }
         public DateTime? DateTaken { get; set; }
+        
         //public Dictionary<string, string> Tags { get; set; }
 
         private void GetExifs(FileInfo file)
@@ -52,7 +54,8 @@ namespace ImageManager.DataModel
                         //Tags.Add("Comment", comment);
                     }
 
-                    //look to add GPS, and artist?
+            //look to add GPS, and artist?
+
                 }
                 catch (Exception ex)
                 {

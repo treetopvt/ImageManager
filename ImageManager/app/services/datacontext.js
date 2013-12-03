@@ -3,9 +3,9 @@
 
     var serviceId = 'datacontext';
     angular.module('app').factory(serviceId,
-        ['common', datacontext]);
+        ['$http', 'common', datacontext]);
 
-    function datacontext(common) {
+    function datacontext($http,common) {
         var $q = common.$q;
 
         var getLogFn = common.logger.getLogFn;
@@ -22,6 +22,9 @@
 
         var service = {
             getAllImages: getAllImages,
+            getImageThumbnail: getImageThumbnail,
+            getThumbnailURL: getThumbnailURL,
+            getImageURL:getImageURL,
             reset: reset
         };
 
@@ -39,6 +42,44 @@
                 return data.results;
             }
 
+        }
+
+        function getThumbnailURL(id) {
+            return serviceName + '/GetImageThumbnail/?id=' + id;
+        }
+
+        function getImageURL(id) {
+            return serviceName + '/GetImageBinary/?id=' + id;
+
+        }
+
+        function getImageThumbnail(id) {
+
+           var thumbnail =  $http({
+                url: serviceName + '/GetImageThumbnail/',
+                method: "GET",
+                params: { id: id },
+                headers: { 'Content-Type': 'image/jpeg' }
+            }).then(success, failure);
+
+           return $q.when(thumbnail)
+
+
+            function success(dataImage) {
+                log("Retrieved thumbnail");
+                return 'data:image/jpeg;' + dataImage.data;
+                var binary = '';
+                //var responseText = dataImage.data;
+                //var responseTextLen = dataImage.data.length;
+                //for (var j = 0; j < responseTextLen; j += 1) {
+                //    binary += String.fromCharCode(responseText.charCodeAt(j) & 0xff)
+                //}
+                ////'data:image/jpeg;base64,' +
+                //return 'data:image/*;base64,' + window.btoa(binary);
+            }
+            function failure(error) {
+                log('Error retrieving thumbnail: ' + error);
+            }
         }
 
         function reset() {

@@ -1,6 +1,7 @@
 ﻿using Breeze.WebApi2;
 using ImageManager.DataAccess;
 using ImageManager.DataModel;
+using ImageResizer;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -61,6 +62,76 @@ namespace ImageManager.Controllers
         public SingleResult<ImageModel> GetImageModel([FromODataUri] Guid key)
         {
             return SingleResult.Create(_ImageRepository.Images.Where(imagemodel => imagemodel.Id == key).AsQueryable());
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetImageBinary(Guid id)
+        {
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            string imgPath = _ImageRepository.GetImagePath(id);
+            if (string.IsNullOrEmpty(imgPath))
+            {
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            } 
+            //String filePath = HostingEnvironment.MapPath("~/Images/HT.jpg");
+
+            using (var fs = new FileStream(imgPath, FileMode.Open))
+            {
+                Image image = Image.FromStream(fs);
+                using (var memoryStream = new MemoryStream())
+                {
+                    image.Save(memoryStream, ImageFormat.Jpeg);
+                    result.Content = new ByteArrayContent(memoryStream.ToArray());
+                }
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            }
+            return result;
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetImageThumbnail(Guid id)
+        {
+            
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            byte[] bytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
+            MemoryStream bStream = new MemoryStream();
+            if (bytes == null)
+            {
+                string imgPath = _ImageRepository.GetImagePath(id);
+                if (string.IsNullOrEmpty(imgPath)){
+                     return new HttpResponseMessage(HttpStatusCode.NotFound);
+                }
+                var settings = new ResizeSettings
+                {
+                    MaxWidth = 45,
+                    MaxHeight = 45,
+                    Format = "jpg"
+                };
+                using (var fs = new FileStream(imgPath, FileMode.Open))
+                {
+                    //settings.Add("quality", quality.ToString());
+                    ImageBuilder.Current.Build(fs, bStream, settings);
+                }
+                //resized = outStream.ToArray();
+
+            }else{
+                bStream = new MemoryStream(bytes);
+            }
+
+            if (bStream != null && bStream.Length > 0){
+                Image image = Image.FromStream(bStream);
+                MemoryStream memoryStream = new MemoryStream();
+                image.Save(memoryStream, ImageFormat.Jpeg);
+                result.Content = new ByteArrayContent(memoryStream.ToArray());
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
+                return result;
+            }
+            else
+            {
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+
         }
 
         // POST api/<controller>
