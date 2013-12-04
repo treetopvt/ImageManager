@@ -176,7 +176,7 @@
                 'rightText': '@',
                 'allowCollapse': '@'
             },
-            templateUrl: '/app/layout/widgetheader.html',
+            templateUrl: 'app/layout/widgetheader.html',
             restrict: 'A',
         };
         return directive;

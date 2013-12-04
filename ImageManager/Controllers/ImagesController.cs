@@ -37,7 +37,16 @@ namespace ImageManager.Controllers
         [HttpGet]
         public string Metadata()
         {
-            return _ImageRepository.MetaData;
+            try
+            {
+                return _ImageRepository.MetaData;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+                throw;
+            }
+
         }
 
         // GET api/<controller>/5
