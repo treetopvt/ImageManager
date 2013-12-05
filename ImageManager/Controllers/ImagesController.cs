@@ -100,47 +100,57 @@ namespace ImageManager.Controllers
         [HttpGet]
         public HttpResponseMessage GetImageThumbnail(Guid id)
         {
-            
-            var result = new HttpResponseMessage(HttpStatusCode.OK);
-            byte[] bytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
-            MemoryStream bStream = new MemoryStream();
-            if (bytes == null)
+            try
             {
-                string imgPath = _ImageRepository.GetImagePath(id);
-                if (string.IsNullOrEmpty(imgPath)){
-                     return new HttpResponseMessage(HttpStatusCode.NotFound);
-                }
-                var settings = new ResizeSettings
+                var result = new HttpResponseMessage(HttpStatusCode.OK);
+                byte[] bytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
+                MemoryStream bStream = new MemoryStream();
+                if (bytes == null)
                 {
-                    MaxWidth = 45,
-                    MaxHeight = 45,
-                    Format = "jpg"
-                };
-                using (var fs = new FileStream(imgPath, FileMode.Open))
-                {
-                    //settings.Add("quality", quality.ToString());
-                    ImageBuilder.Current.Build(fs, bStream, settings);
+                    string imgPath = _ImageRepository.GetImagePath(id);
+                    if (string.IsNullOrEmpty(imgPath))
+                    {
+                        return new HttpResponseMessage(HttpStatusCode.NotFound);
+                    }
+                    var settings = new ResizeSettings
+                    {
+                        MaxWidth = 45,
+                        MaxHeight = 45,
+                        Format = "jpg"
+                    };
+                    using (var fs = new FileStream(imgPath, FileMode.Open))
+                    {
+                        //settings.Add("quality", quality.ToString());
+                        ImageBuilder.Current.Build(fs, bStream, settings);
+                    }
+                    //resized = outStream.ToArray();
+
                 }
-                //resized = outStream.ToArray();
+                else
+                {
+                    bStream = new MemoryStream(bytes);
+                }
 
-            }else{
-                bStream = new MemoryStream(bytes);
+                if (bStream != null && bStream.Length > 0)
+                {
+                    Image image = Image.FromStream(bStream);
+                    MemoryStream memoryStream = new MemoryStream();
+                    image.Save(memoryStream, ImageFormat.Jpeg);
+                    result.Content = new ByteArrayContent(memoryStream.ToArray());
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
+                    return result;
+                }
+                else
+                {
+                    return new HttpResponseMessage(HttpStatusCode.NotFound);
+                }
+
             }
-
-            if (bStream != null && bStream.Length > 0){
-                Image image = Image.FromStream(bStream);
-                MemoryStream memoryStream = new MemoryStream();
-                image.Save(memoryStream, ImageFormat.Jpeg);
-                result.Content = new ByteArrayContent(memoryStream.ToArray());
-                result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-                return result;
-            }
-            else
+            catch (Exception ex)
             {
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
-
         }
 
         // POST api/<controller>
