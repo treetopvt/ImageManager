@@ -198,8 +198,8 @@ namespace ImageManager.Controllers
 
             if (ConfigurationSettings.AppSettings.HasKeys())
 			{
-                string valuePath = isDev ? "DevImagePath" : "ImagePath";
-                string[] values= ConfigurationSettings.AppSettings.GetValues("DevImagePath");
+               // string valuePath = isDev ? "DevImagePath" : "ImagePath";
+                string[] values= ConfigurationSettings.AppSettings.GetValues("ImagePath");
                 if (values.Any())
                     return values[0].EndsWith(@"\") ? values[0] : values[0] + @"\";
                 else

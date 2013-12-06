@@ -13,7 +13,7 @@
 
         configureBreeze();
 
-        var useLocalHost = true;
+        var useLocalHost = false;
 
         var host = useLocalHost ? "http://localhost:64261" : "http://www.bullsbluff.com/ImageManager";
         var serviceName = host + "/breeze/Images";
