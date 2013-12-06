@@ -2,6 +2,7 @@
 using ImageManager.DataAccess;
 using ImageManager.DataModel;
 using ImageResizer;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Http.OData;
@@ -19,16 +21,20 @@ using System.Web.Http.OData.Query;
 
 namespace ImageManager.Controllers
 {
+
     //ApiController
     [BreezeController]
     public class ImagesController : EntitySetController<ImageModel, Guid>
     {
+
+        private readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private static ImageManagerRepository _ImageRepository = new ImageManagerRepository(GetImagePath(IsDebug()));
         // GET api/<controller>
         [Queryable(AllowedQueryOptions = AllowedQueryOptions.All)]
         public IQueryable<ImageModel> GetImages()
         {
+            log.Info("Getting Image List");
 
             //return new string[] { "value1", "value2" };
             return _ImageRepository.Images;
@@ -39,6 +45,8 @@ namespace ImageManager.Controllers
         {
             try
             {
+                log.Info("Getting Metadata");
+
                 return _ImageRepository.MetaData;
             }
             catch (Exception ex)
@@ -102,6 +110,7 @@ namespace ImageManager.Controllers
         {
             try
             {
+                log.Info("Getting Thumbnail");
                 var result = new HttpResponseMessage(HttpStatusCode.OK);
                 byte[] bytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
                 MemoryStream bStream = new MemoryStream();
@@ -149,6 +158,7 @@ namespace ImageManager.Controllers
             }
             catch (Exception ex)
             {
+                log.Error("Error retrieving thumbnail", ex);
                 return new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
         }
