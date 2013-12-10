@@ -7,8 +7,14 @@
     toastr.options.timeOut = 4000;
     toastr.options.positionClass = 'toast-bottom-right';
 
+    var useLocalHost = true;
+    var host = useLocalHost ? "http://localhost:64261" : "http://www.bullsbluff.com/ImageManager";
+    var serviceName = host + "/breeze/Images";
+
     // For use with the HotTowel-Angular-Breeze add-on that uses Breeze
-    var remoteServiceName = 'breeze/Breeze';
+    //var remoteServiceName = 'breeze/Breeze';
+    var remoteServiceName = serviceName;
+    
 
     var events = {
         controllerActivateSuccess: 'controller.activateSuccess',

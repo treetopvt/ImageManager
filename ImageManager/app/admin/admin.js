@@ -15,6 +15,25 @@
 
         vm.CurrentImage = "";
 
+        vm.imageCount = 0;
+
+        //for paging
+        vm.ImagesCount = getImagesCount();
+        vm.pageChanged = pageChanged;
+        vm.paging = {
+            currentPage: 1,
+            maxPagesToShow: 5,
+            pageSize: 15
+        };//literal
+
+        //because pageCount is dynamic, make it a property (could be a function)
+        Object.defineProperty(vm.paging, 'pageCount', {
+            get: function () {
+                return Math.ceil(vm.imageCount / vm.paging.pageSize);
+            }
+        });
+
+
         activate();
 
         vm.getImageThumbnail = getImageThumbnail;
@@ -27,10 +46,10 @@
         }
 
         function getAllImages() {
-            datacontext.getAllImages()
-             .then(success)
-             .fail(failed)
-             .fin(refreshView);
+            datacontext.getAllImages().then(success, failed, refreshView);
+            //.success(success)
+            // .fail(failed)
+            // .fin(refreshView);
         }
         function success(data) {
             vm.Images = data;
@@ -66,6 +85,21 @@
                 
             //})
             
+        }
+
+        function pageChanged(page) {
+            if (!page) {
+                return;
+            }
+            vm.paging.currentPage = page;
+            getAllImages();
+
+        }
+        function getImagesCount() {
+
+            return datacontext.getImageCount().then(function (data) {
+                return vm.imageCount = data;
+            });
         }
     }
 })();

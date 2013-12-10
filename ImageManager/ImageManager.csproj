@@ -254,6 +254,7 @@
     <Content Include="app\common\bootstrap\bootstrap.dialog.js" />
     <Content Include="app\common\common.js" />
     <Content Include="app\common\logger.js" />
+    <Content Include="app\common\pagination.js" />
     <Content Include="app\common\spinner.js" />
     <Content Include="app\config.exceptionHandler.js" />
     <Content Include="app\config.js" />
