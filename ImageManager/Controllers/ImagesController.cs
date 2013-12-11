@@ -31,7 +31,7 @@ namespace ImageManager.Controllers
 
         private static ImageManagerRepository _ImageRepository = new ImageManagerRepository(GetImagePath(IsDebug()));
         // GET api/<controller>
-        [Queryable(AllowedQueryOptions = AllowedQueryOptions.All)]
+        
         public IQueryable<ImageModel> GetImages()
         {
             log.Info("Getting Image List");

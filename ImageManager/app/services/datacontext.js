@@ -38,10 +38,10 @@
 
         function getImageCount() {
             if (_areImagesLoaded()) {
-                return $q.when(_getLocalEntityCount('ImageModel'));
+                return $q.when(_getLocalEntityCount('GetImages'));
             }
             //go get them remotely.
-            return EntityQuery.from('GetImages').take(0).inlineCount()
+            return EntityQuery.from('GetImages').take(0).inlineCount(true)
                 .using(manager).execute() //remote call
                 .to$q(_getInlineCount);
         }
@@ -63,6 +63,7 @@
             var query = EntityQuery.from("GetImages")
                 .orderBy(imageOrderBy)
                 .toType('ImageModel')
+                .inlineCount(true)
                 .using(manager).execute()
                 .to$q(success, _queryFailed);
 

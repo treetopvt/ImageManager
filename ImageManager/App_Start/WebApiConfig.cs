@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using ImageManager.Models;
 using Microsoft.Data.Edm;
 using System.Web.Http.OData.Builder;
+using ImageManager.DataModel;
 
 namespace ImageManager
 {

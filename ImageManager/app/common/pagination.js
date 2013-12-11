@@ -88,7 +88,7 @@
             onSelectPage: ' &'
         },
         controller: 'PaginationController',
-        templateUrl: 'template/pagination/pagination.html',
+        templateUrl: 'app/template/pagination/pagination.html',
         replace: true,
         link: function (scope, element, attrs, paginationCtrl) {
 
@@ -208,7 +208,7 @@
             onSelectPage: ' &'
         },
         controller: 'PaginationController',
-        templateUrl: 'template/pagination/pager.html',
+        templateUrl: 'app/template/pagination/pager.html',
         replace: true,
         link: function (scope, element, attrs, paginationCtrl) {
 
