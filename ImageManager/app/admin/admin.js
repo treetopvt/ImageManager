@@ -23,7 +23,7 @@
         vm.paging = {
             currentPage: 1,
             maxPagesToShow: 5,
-            pageSize: 15
+            pageSize: 5
         };//literal
 
         //because pageCount is dynamic, make it a property (could be a function)
@@ -40,7 +40,7 @@
         vm.ShowImage = ShowImage;
 
         function activate() {
-            var promises = [getAllImages()];
+            var promises = [getImages()];//getAllImages()
             common.activateController(promises, controllerId)
                 .then(function () { log('Activated Admin View'); });
         }
@@ -92,7 +92,7 @@
                 return;
             }
             vm.paging.currentPage = page;
-            getAllImages();
+            getImages();
 
         }
         function getImagesCount() {
@@ -101,5 +101,24 @@
                 return vm.imageCount = data;
             });
         }
+
+        function getImages(forceRefresh) {
+            //getImages is async and will return a promise
+            //            datacontext.getAllImages().then(success, failed, refreshView);
+
+            return datacontext.getAllImages(forceRefresh, vm.paging.currentPage, vm.paging.pageSize, '')
+                .then(function (data) {
+                    vm.Images = data;
+                   // getAttendeeFilteredCount();
+                    if (!vm.imageCount || forceRefresh) {
+                        //only get if no count, or the refresh happens (assumption made)
+                        getImagesCount(); //make sure it is local cache
+                    }
+                    //applyFilter(); //filter data when it comes in
+                    return data;
+
+                }, failed);
+        }
+
     }
 })();

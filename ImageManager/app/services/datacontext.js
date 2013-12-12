@@ -38,7 +38,7 @@
 
         function getImageCount() {
             if (_areImagesLoaded()) {
-                return $q.when(_getLocalEntityCount('GetImages'));
+                return $q.when(_getLocalEntityCount('Images'));
             }
             //go get them remotely.
             return EntityQuery.from('GetImages').take(0).inlineCount(true)
