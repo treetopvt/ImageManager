@@ -1,3 +1,4 @@
+using Breeze.WebApi;
 using System.Web.Http;
 
 [assembly: WebActivator.PreApplicationStartMethod(
@@ -17,6 +18,8 @@ namespace ImageManager.App_Start {
           name: "BreezeApi",
           routeTemplate: "breeze/{controller}/{action}"
       );
+      // CORS enabled on this server
+      GlobalConfiguration.Configuration.MessageHandlers.Add(new BreezeSimpleCorsHandler());
     }
   }
 }

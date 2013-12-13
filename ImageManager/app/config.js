@@ -7,8 +7,9 @@
     toastr.options.timeOut = 4000;
     toastr.options.positionClass = 'toast-bottom-right';
 
-    var useLocalHost = true;
-    var host = useLocalHost ? "http://localhost:64261" : "http://www.bullsbluff.com/ImageManager";
+    var useLocalHost = false;
+    var host = useLocalHost ? "http://localhost:64261" : 'http://bullhomeserver/ImageManager';
+    //"http://www.bullsbluff.com/ImageManager";
     var serviceName = host + "/breeze/Images";
 
     // For use with the HotTowel-Angular-Breeze add-on that uses Breeze

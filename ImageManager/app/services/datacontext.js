@@ -11,7 +11,9 @@
        
 
         var getLogFn = common.logger.getLogFn;
-        var log = getLogFn(serviceId);
+        var log = getLogFn(serviceId); //information message
+        var logError = getLogFn(serviceId, 'error');//error message
+        var logSuccess = getLogFn(serviceId, 'success');//success message
 
         var manager = emFactory.newManager();
 

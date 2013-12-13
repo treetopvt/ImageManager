@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Web.Hosting;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Query;
 
@@ -24,6 +25,7 @@ namespace ImageManager.Controllers
 
     //ApiController
     [BreezeController]
+    [EnableCors("*", "*", "*")]
     public class ImagesController : EntitySetController<ImageModel, Guid>
     {
 
