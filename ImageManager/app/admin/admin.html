@@ -4,7 +4,9 @@
             <div class="row">
                 <div class="col-md-4">
                     <ul class="list-unstyled list-flow-tight">
-                        <li class="" data-ng-repeat="image in vm.Images" data-ng-click="vm.ShowImage(image)">
+                        <li class="" data-ng-repeat="image in vm.Images" data-ng-click="vm.setCurrentImageIndex($index)">
+                            <!-- " vm.showimage(image)" -->
+
                             <div class="well well-sm">
                                 <img data-ng-src="{{vm.getImageThumbnail(image)}}" alt="image.fileName" class="img img-thumbnail img-responsive" />
                                 <!--<button data-ng-click="vm.getImageThumbnail(image)" class="btn btn-default"></button>-->
@@ -15,7 +17,13 @@
                     </ul>
                 </div>
                 <div class="col-md-7">
-                    <img alt="No Image Selected" class="img img-responsive" data-ng-src="{{vm.CurrentImage}}" />
+                    <div class="row">
+                        <img alt="No Image Selected" class="img img-responsive" data-ng-src="{{vm.CurrentImage}}" />
+                    </div>
+                    <div class="row">
+                        <button class="col-md-2 previous" data-ng-click="vm.previousImage()">Previous</button>
+                        <button class="col-md-offset-4 col-md-2 next" data-ng-click="vm.nextImage()">Next</button>
+                    </div>
                 </div>
 
                 <div class="row">

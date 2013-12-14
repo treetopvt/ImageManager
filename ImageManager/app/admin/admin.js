@@ -2,7 +2,7 @@
     'use strict';
     var controllerId = 'admin';
     angular.module('app').controller(controllerId, ['$scope','$timeout', 'common', 'datacontext', admin]);
-
+ 
     function admin($scope, $timeout, common, datacontext) {
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(controllerId);
@@ -14,7 +14,7 @@
         vm.errorMessage = "";
 
         vm.CurrentImage = "";
-
+        vm.currentIndex = 0;
         vm.imageCount = 0;
 
         //for paging
@@ -26,6 +26,10 @@
             pageSize: 5
         };//literal
 
+
+
+        vm.direction='left';
+
         //because pageCount is dynamic, make it a property (could be a function)
         Object.defineProperty(vm.paging, 'pageCount', {
             get: function () {
@@ -33,6 +37,9 @@
             }
         });
 
+        vm.nextImage = getNextImage;
+        vm.previousImage = getPreviousImage;
+        vm.setCurrentImageIndex = setCurrentImageIndex;
 
         activate();
 
@@ -43,6 +50,35 @@
             var promises = [getImages()];//getAllImages()
             common.activateController(promises, controllerId)
                 .then(function () { log('Activated Admin View'); });
+        }
+
+        function setCurrentImageIndex(index){
+            vm.direction = (index >vm.currentIndex) ? 'left' : 'right';
+            vm.currentIndex = index;
+            ShowImage(vm.Images[index]);
+        }
+
+        function getNextImage() {
+            //vm.direction = 'right';
+            //vm.currentIndex = (vm.currentIndex > 0) ? --vm.currentIndex : vm.Images.length - 1;
+            setCurrentImageIndex((vm.currentIndex < vm.Images.length - 1) ? ++vm.currentIndex : 0);
+
+            //need to check to see if there are more images
+        }
+
+        function getPreviousImage() {
+            //vm.direction = 'left';
+            var prevIndex = --vm.currentIndex;
+            if (prevIndex < 0 && vm.paging.currentPage > 1) {
+                //go get previous group of images and set the current image to the last one in the array
+                vm.currentIndex = vm.paging.pageSize
+                pageChanged(--vm.paging.currentPage);
+                //need to set the currentIndex to vm.Images.length -1, but only after the images have been returned
+            } else {
+                setCurrentImageIndex(prevIndex);
+
+            }
+
         }
 
         function getAllImages() {
@@ -66,7 +102,8 @@
         }
 
         function ShowImage(image) {
-            vm.CurrentImage= datacontext.getImageURL(image.id);
+            vm.CurrentImage = datacontext.getImageURL(image.id);
+
         }
 
         function getImageThumbnail(image) {
@@ -115,6 +152,12 @@
                         getImagesCount(); //make sure it is local cache
                     }
                     //applyFilter(); //filter data when it comes in
+                    if (vm.currentIndex == vm.paging.pageSize) {
+                        //need to get last image in this current list
+                        vm.setCurrentImageIndex(vm.Images.length-1);
+                    } else {
+                        vm.setCurrentImageIndex(vm.currentIndex);
+                    }
                     return data;
 
                 }, failed);
