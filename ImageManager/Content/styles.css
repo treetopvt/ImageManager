@@ -533,3 +533,7 @@ a {
 }
 
 /*#endregion */
+
+.img-no-drag{
+    -webkit-user-drag: none;
+}

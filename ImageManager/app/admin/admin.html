@@ -8,7 +8,7 @@
                             <!-- " vm.showimage(image)" -->
 
                             <div class="well well-sm">
-                                <img data-ng-src="{{vm.getImageThumbnail(image)}}" alt="image.fileName" class="img img-thumbnail img-responsive" />
+                                <img data-ng-src="{{vm.getImageThumbnail(image)}}" alt="image.fileName" class="img img-thumbnail" />
                                 <!--<button data-ng-click="vm.getImageThumbnail(image)" class="btn btn-default"></button>-->
                                 <!--<img ng-src="{{image.thumbnail}}" />-->
                                 {{image.fileName}}
@@ -18,11 +18,12 @@
                 </div>
                 <div class="col-md-7">
                     <div class="row">
-                        <img alt="No Image Selected" class="img img-responsive" data-ng-src="{{vm.CurrentImage}}" />
+                        <img alt="No Image Selected" ng-swipe-left="vm.nextImage()" ng-swipe-right="vm.previousImage()"
+                             class="img img-responsive img-responsive img-no-drag" data-ng-src="{{vm.CurrentImage}}" />
                     </div>
                     <div class="row">
                         <button class="col-md-2 previous" data-ng-click="vm.previousImage()" data-ng-disabled="(vm.paging.currentPage == 1) && (vm.currentIndex == 0)">Previous</button>
-                        <button class="col-md-offset-4 col-md-2 next" data-ng-click="vm.nextImage()" data-ng-disabled="(vm.paging.currentPage == vm.paging.pageCount) && (vm.currentIndex == vm.Images.length-1)">Next</button>
+                        <button class="col-md-offset-8 col-md-2 next" data-ng-click="vm.nextImage()" data-ng-disabled="(vm.paging.currentPage == vm.paging.pageCount) && (vm.currentIndex == vm.Images.length-1)">Next</button>
                     </div>
                 </div>
 

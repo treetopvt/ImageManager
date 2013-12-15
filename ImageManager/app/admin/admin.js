@@ -82,7 +82,7 @@
                 vm.currentIndex = vm.paging.pageSize
                 pageChanged(--vm.paging.currentPage);
                 //need to set the currentIndex to vm.Images.length -1, but only after the images have been returned
-            } else {
+            } else if (prevIndex >=0){
                 setCurrentImageIndex(prevIndex);
 
             }

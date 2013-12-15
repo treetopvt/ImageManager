@@ -6,7 +6,7 @@
         'ngAnimate',        // animations
         'ngRoute',          // routing
         'ngSanitize',       // sanitizes html bindings (ex: sidebar.js)
-
+        'ngTouch',
         // Custom modules 
         'common',           // common functions, logger, spinner
         'common.bootstrap', // bootstrap dialog wrapper functions
