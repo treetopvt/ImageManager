@@ -61,14 +61,22 @@
         function getNextImage() {
             //vm.direction = 'right';
             //vm.currentIndex = (vm.currentIndex > 0) ? --vm.currentIndex : vm.Images.length - 1;
-            setCurrentImageIndex((vm.currentIndex < vm.Images.length - 1) ? ++vm.currentIndex : 0);
+            var nextIndex = vm.currentIndex + 1;
+            if (nextIndex >= vm.Images.length && vm.paging.currentPage < vm.paging.pageCount) {
+                //reached end of current list
+                vm.currentIndex = 0;
+                pageChanged(vm.paging.currentPage + 1);
+            }else if (nextIndex <vm.Images.length){
+                setCurrentImageIndex(nextIndex);
+            }
+            
 
             //need to check to see if there are more images
         }
 
         function getPreviousImage() {
             //vm.direction = 'left';
-            var prevIndex = --vm.currentIndex;
+            var prevIndex = vm.currentIndex-1;
             if (prevIndex < 0 && vm.paging.currentPage > 1) {
                 //go get previous group of images and set the current image to the last one in the array
                 vm.currentIndex = vm.paging.pageSize
