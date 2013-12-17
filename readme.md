@@ -14,6 +14,9 @@ Goals:<ul>
 	<li>Single Page App with Angular</li>
 </ul>
 
+Using open source image library found here:
+http://jimbobsquarepants.github.io/ImageProcessor/
+
 
  <!--- [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax)
  - [Markdown Basics](http://daringfireball.net/projects/markdown/basics)
