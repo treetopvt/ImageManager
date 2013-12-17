@@ -118,19 +118,19 @@ namespace ImageManager.DataAccess
 						using (ImageFactory imageFactory = new ImageFactory())
 						{
 							// Load, resize, set the format and quality and save an image.
-                            imageFactory.Load(inStream)
-                                .Format(format)
-                                .Quality(quality)
-                                .Resize(size)
-                                .Save(outStream);
-                            //var fact = imageFactory.Load(inStream)
-                            //            .Format(format)
-                            //            .Quality(quality);
-                            //if (resize)
-                            //{
-                            //    fact.Resize(size);
-                            //}
-                            //    fact.Save(outStream);
+                            //imageFactory.Load(inStream)
+                            //    .Format(format)
+                            //    .Quality(quality)
+                            //    .Constrain(size)
+                            //    .Save(outStream);
+                            var fact = imageFactory.Load(inStream)
+                                        .Format(format)
+                                        .Quality(quality);
+                            if (resize)
+                            {
+                                fact.Constrain(size);
+                            }
+                            fact.Save(outStream);
 						}
 
 						// Do something with the stream.

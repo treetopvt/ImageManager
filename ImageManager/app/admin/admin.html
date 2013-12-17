@@ -2,7 +2,7 @@
     <section class="matter">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <ul class="list-unstyled list-flow-tight">
                         <li class="" data-ng-repeat="image in vm.Images" data-ng-click="vm.setCurrentImageIndex($index)">
                             <!-- " vm.showimage(image)" -->
@@ -15,16 +15,27 @@
                             </div>
                         </li>
                     </ul>
+                    <pagination boundary-links="true"
+                                on-select-page="vm.pageChanged(page)"
+                                total-items="vm.imageCount"
+                                items-per-page="vm.paging.pageSize"
+                                page="vm.paging.currentPage"
+                                max-size="vm.paging.maxPagesToShow"
+                                class="pagination-small"
+                                previous-text="Prev"
+                                next-text="Next"
+                                first-text="First"
+                                last-text="Last" />
+
                 </div>
                 <div class="col-md-7">
-                    <div class="row">
-                        <img alt="No Image Selected" ng-swipe-left="vm.nextImage()" ng-swipe-right="vm.previousImage()"
-                             class="img img-responsive img-responsive img-no-drag" data-ng-src="{{vm.CurrentImage}}" />
-                    </div>
-                    <div class="row">
-                        <button class="col-md-2 previous" data-ng-click="vm.previousImage()" data-ng-disabled="(vm.paging.currentPage == 1) && (vm.currentIndex == 0)">Previous</button>
-                        <button class="col-md-offset-8 col-md-2 next" data-ng-click="vm.nextImage()" data-ng-disabled="(vm.paging.currentPage == vm.paging.pageCount) && (vm.currentIndex == vm.Images.length-1)">Next</button>
-                    </div>
+                    <!--<div class="row">-->
+                        <div class="container">
+                            <img alt="No Image Selected" ng-swipe-left="vm.nextImage()" ng-swipe-right="vm.previousImage()"
+                                 class="img img-responsive img-no-drag" data-ng-src="{{vm.CurrentImage}}" />
+                        </div>
+                    <!--</div>-->
+
                 </div>
 
                 <div class="row">
@@ -33,22 +44,16 @@
                     </div>
                 </div>
             </div>
-
-            <div class="widget-foot">
-                <div class="clearfix"></div>
-                <pagination boundary-links="true"
-                            on-select-page="vm.pageChanged(page)"
-                            total-items="vm.imageCount"
-                            items-per-page="vm.paging.pageSize"
-                            page="vm.paging.currentPage"
-                            max-size="vm.paging.maxPagesToShow"
-                            class="pagination-small"
-                            previous-text="Prev"
-                            next-text="Next"
-                            first-text="First"
-                            last-text="Last"/>
-                <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-md-offset-5">
+                    <button class="col-md-2 previous" data-ng-click="vm.previousImage()" data-ng-disabled="(vm.paging.currentPage == 1) && (vm.currentIndex == 0)">Previous</button>
+                    <button class="col-md-offset-7 col-md-2 next" data-ng-click="vm.nextImage()" data-ng-disabled="(vm.paging.currentPage == vm.paging.pageCount) && (vm.currentIndex == vm.Images.length-1)">Next</button>
+                </div>
             </div>
+        </div>
+        <div class="widget-foot">
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
         </div>
     </section>
 </section>
