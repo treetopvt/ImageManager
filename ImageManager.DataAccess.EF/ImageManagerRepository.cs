@@ -24,18 +24,24 @@ namespace ImageManager.DataAccess
 		private IList<ImageModel> _ImageList;
 		private readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private IList<FolderModel> _FolderList;
+        private FolderModel _RootFolder;
 
 		private string _rootPath = "";
 
 		public ImageManagerRepository()
 		{
 			_ImageList = new List<ImageModel>();
+            _FolderList = new List<FolderModel>();
 		}
 
 		public ImageManagerRepository(string rootPath)
 		{
 			_rootPath = rootPath;
-			_ImageList = GetImageList(rootPath);
+			//_ImageList = FolderModel.GetImageList(rootPath); //only the root images
+            _RootFolder = new FolderModel(rootPath);
+            _ImageList = _RootFolder.Images;
+            _FolderList = _RootFolder.GetAllSubFolders();
 		}
 
 		public IQueryable<ImageModel> Images {
@@ -47,23 +53,17 @@ namespace ImageManager.DataAccess
 			}
 		}
 
-		//public byte[] GetImageThumbnail(Guid imageGuid){
-		//    try
-		//    {
-		//        var img = _ImageList.FirstOrDefault(i=> i.Id == imageGuid);
-		//        if (img !=null){
-		//            ExifReader reader = new ExifReader(_rootPath + img.RelativePath + img.FileName);
-		//            return reader.GetJpegThumbnailBytes();
-		//        }
-		//        return null;
-		//    }catch(Exception ex)
-		//    {
-		//        log.Error("Error retrieving thumbnail using ExifReader", ex);
-		//        //do nothing here, no exif data existed
-		//    }
-		//    return null;
-		//}
-
+        public IQueryable<FolderModel> Folders
+        {
+            get {
+                var rtnList = new List<FolderModel>();
+                rtnList.Add(_RootFolder);
+                rtnList.AddRange(_FolderList);
+                return rtnList.AsQueryable();
+            }
+            set { _FolderList = value.ToList(); }
+        }
+        public FolderModel RootFolder { get; set; }
 
 		public async Task<byte[]> GetImageBytes(Guid imageGuid, ImageManager.DataModel.ImageModel.ImageSize desiredSize)
 		{
@@ -171,38 +171,6 @@ namespace ImageManager.DataAccess
 				return "Error retrieveing Metadata";
 			}
 		}
-
-		#region Helper Methods
-
-		private static List<ImageModel> GetImageList(string imagePath)
-		{
-			var rtnImage = new List<ImageModel>();
-			var dir = new DirectoryInfo(imagePath);
-			var images = dir.GetFiles().Where(f => IsImage(f));
-			foreach (var image in images)
-			{
-				rtnImage.Add(new ImageModel(image, imagePath));
-			}
-			return rtnImage;
-		}
-
-		private static bool IsImage(FileInfo f)
-		{
-			var extension = f.Extension.ToLowerInvariant().TrimStart('.');
-			switch (extension)
-			{
-				case "jpg":
-				case "png":
-				case "bmp":
-				case "gif":
-					return true;
-				default:
-					return false;
-					break;
-			}
-
-		}
-		#endregion
 
 		//protected override string BuildJsonMetadata()
 		//{

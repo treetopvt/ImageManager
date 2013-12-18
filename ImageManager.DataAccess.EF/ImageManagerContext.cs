@@ -26,6 +26,7 @@ namespace ImageManager.DataAccess.EF
         }
  
         public DbSet<ImageModel> Images { get; set; }
+        public DbSet<FolderModel> Folders { get; set; }
         //public DbSet<Order> Orders { get; set; }
         //public DbSet<Product> Products { get; set; }
      }

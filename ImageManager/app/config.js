@@ -7,7 +7,7 @@
     toastr.options.timeOut = 4000;
     toastr.options.positionClass = 'toast-bottom-right';
 
-    var useLocalHost = false;
+    var useLocalHost = true;
     var host = useLocalHost ? "http://localhost:64261" : 'http://bullhomeserver/ImageManager';
     //"http://www.bullsbluff.com/ImageManager";
     var serviceName = host + "/breeze/Images";
@@ -23,8 +23,8 @@
     };
 
     var config = {
-        appErrorPrefix: '[HT Error] ', //Configure the exceptionHandler decorator
-        docTitle: 'HotTowel: ',
+        appErrorPrefix: '[IM Error] ', //Configure the exceptionHandler decorator
+        docTitle: 'ImageManager: ',
         events: events,
         remoteServiceName: remoteServiceName,
         version: '2.0.0'

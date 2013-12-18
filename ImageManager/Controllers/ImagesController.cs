@@ -120,7 +120,17 @@ namespace ImageManager.Controllers
         }
 
 
-		[HttpGet]
+        #region Folders
+
+        public IQueryable<FolderModel> GetFolders()
+        {
+            return _ImageRepository.Folders;
+        }
+
+        #endregion
+
+
+        [HttpGet]
 		public async Task<HttpResponseMessage> GetImageThumbnail(Guid id)
 		{
 			try
