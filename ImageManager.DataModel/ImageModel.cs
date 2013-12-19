@@ -35,6 +35,7 @@ namespace ImageManager.DataModel
         }
 
         public Guid Id { get; set; }
+        public Guid FolderId { get; set; }
         public string FileName { get; set; }
         public string RelativePath { get; set; }
         public string DirectoryName { get; set; }

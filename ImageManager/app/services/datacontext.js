@@ -23,7 +23,8 @@
             getImageThumbnail: getImageThumbnail,
             getThumbnailURL: getThumbnailURL,
             getImageURL: getImageURL,
-            getImageCount:getImageCount,
+            getImageCount: getImageCount,
+            getAllFolders:getAllFolders,
             reset: reset
         };
 
@@ -94,12 +95,72 @@
             }
 
 
+
             function success(data) {
                 //log("Retrieved " + data.results.length);
                 _areImagesLoaded(true); //data loaded, set attendees loaded to true
                 log('Retrieved [Image List] from remote data source', data.results.length, true);//true means show alert on screen
                 return getByPage();
               //  return data.results;
+            }
+
+        }
+
+        function getAllFolders(forceRemote, page, size, nameFilter) {
+            var take = size || 20; //how many to get at a time
+            var skip = page ? (page - 1) * size : 0;//how many to skip, if no page defined, start at first page
+            var imageOrderBy = 'name';
+
+            log("Getting Folders");
+
+            if (_areFoldersLoaded() && !forceRemote) {//get data locally
+                return $q.when(getByPage()); //promise because getByPage doesn't return a promise (sync call)
+                //attendees = _getAllLocal(entityNames.attendee, attendeeOrderBy);
+                //must return a promise, because that's what we expect (the then call)
+                //return $q.when(attendees);//wrap itself within a promise
+            }
+
+            var query = EntityQuery.from("GetFolders")
+                .orderBy(imageOrderBy)
+                .toType('FolderModel')
+                .inlineCount(true)
+                .expand('ChildFolders')
+                .using(manager).execute()
+                .to$q(success, _queryFailed);
+
+            return query;
+
+
+            //return manager.executeQuery(query).then(success);
+
+            function getByPage() {
+                var predicate = null;
+                if (nameFilter) {
+                    predicate = _fullNamePredicate(nameFilter);//underscore = private function
+                }
+                //similar to the getAttendees call, but the filter is different
+                var folders = EntityQuery.from('GetFolders')
+                    .where(predicate)//new call because we are filtering
+                    .take(take) //how many to grab
+                    .skip(skip)//how many to skip before grabbing
+                    .orderBy(imageOrderBy)
+                    .expand('ChildFolders')
+                    .toType('FolderModel')
+                    .using(manager)
+                    .executeLocally();
+
+                return folders;
+
+            }
+
+
+
+            function success(data) {
+                //log("Retrieved " + data.results.length);
+                _areFoldersLoaded(true); //data loaded, set attendees loaded to true
+                log('Retrieved [Folders] from remote data source', data.results.length, true);//true means show alert on screen
+                return getByPage();
+                //  return data.results;
             }
 
         }
@@ -177,6 +238,11 @@
         function _areImagesLoaded(value) {
             return _areItemsLoaded('images', value);
         }
+
+        function _areFoldersLoaded(value) {
+            return _areItemsLoaded('folders', value);
+        }
+
         //helper functions
         function _areItemsLoaded(key, value) {
             if (value === undefined) {

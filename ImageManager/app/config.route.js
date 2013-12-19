@@ -39,7 +39,16 @@
                         content: '<i class="icon-lock"></i> Admin'
                     }
                 }
-            }
-        ];
+            }, {
+                url: '/folders',
+                config: {
+                    title: 'folders',
+                    templateUrl: 'app/folders/folders.html',
+                    settings: {
+                        nav: 2,
+                        content: '<i class="glyphicon glyphicon-folder-close"></i> Folders'
+                    }
+                }
+            }];
     }
 })();

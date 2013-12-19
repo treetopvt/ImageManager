@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\FolderModelConfiguration.cs" />
     <Compile Include="Configurations\ImageModelConfiguration.cs" />
     <Compile Include="ImageManagerContext.cs" />
     <Compile Include="ImageManagerRepository.cs" />

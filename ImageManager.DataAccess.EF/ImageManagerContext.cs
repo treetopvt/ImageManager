@@ -20,6 +20,7 @@ namespace ImageManager.DataAccess.EF
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new Configurations.ImageModelConfiguration());
+            modelBuilder.Configurations.Add(new Configurations.FolderModelConfiguration());
             //modelBuilder.Configurations.Add(new OrderDtoConfiguration());
             //modelBuilder.Configurations.Add(new OrderDetailDtoConfiguration());
             //modelBuilder.Configurations.Add(new ProductDtoConfiguration());

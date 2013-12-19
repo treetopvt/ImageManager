@@ -37,6 +37,10 @@ namespace ImageManager.DataModel
         {
             Name = directoryToPopulateFrom.Name;
             ParentFolder = parentFolder;
+            if (parentFolder != null)
+            {
+                ParentFolderId = parentFolder.Id;
+            }
             foreach (var dir in directoryToPopulateFrom.EnumerateDirectories("*.*", SearchOption.TopDirectoryOnly))
             {
                 ChildFolders.Add(new FolderModel(dir, this));
@@ -46,6 +50,7 @@ namespace ImageManager.DataModel
         }
 
         public Guid Id { get; set; }
+        public Guid? ParentFolderId { get; set; }
         public string Name { get; set; }
         public string RelativePath { get; set; }
         public virtual FolderModel ParentFolder { get; set; }
@@ -72,18 +77,18 @@ namespace ImageManager.DataModel
             return rtnList;
         }
 
-        public static List<ImageModel> GetImageList(string imagePath)
+        public List<ImageModel> GetImageList(string imagePath)
         {
             var dir = new DirectoryInfo(imagePath);
             return GetImageList(dir);
         }
-        public static List<ImageModel> GetImageList(DirectoryInfo dir)
+        private List<ImageModel> GetImageList(DirectoryInfo dir)
         {
             var rtnImage = new List<ImageModel>();
             var images = dir.GetFiles().Where(f => IsImage(f));
             foreach (var image in images)
             {
-                rtnImage.Add(new ImageModel(image, dir.FullName));
+                rtnImage.Add(new ImageModel(image, dir.FullName) { FolderId = this.Id });
             }
             return rtnImage;
         }

@@ -14,6 +14,7 @@ namespace ImageManager.DataAccess.EF.Configurations
         {
             //Property(i=>i.Id).IsRequired();
             Property(i=>i.FileName).IsRequired();
+            
 
         }
     }
