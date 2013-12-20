@@ -537,3 +537,20 @@ a {
 .img-no-drag{
     -webkit-user-drag: none;
 }
+
+.folder {
+    background: url(/content/images/Closed-Folder.jpg) no-repeat left center !important;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    height:75px; 
+    width:100px;
+    margin:3px;
+    vertical-align:middle;
+    display:table-cell;
+}
+.folder-label{
+    margin-left:20px;
+}
