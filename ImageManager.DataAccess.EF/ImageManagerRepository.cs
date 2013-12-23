@@ -65,59 +65,77 @@ namespace ImageManager.DataAccess
         }
         public FolderModel RootFolder { get; set; }
 
+        /// <summary>
+        /// will breadth-first search image tree for matching image
+        /// </summary>
+        /// <param name="imageGuid"></param>
+        /// <param name="desiredSize"></param>
+        /// <returns></returns>
 		public async Task<byte[]> GetImageBytes(Guid imageGuid, ImageManager.DataModel.ImageModel.ImageSize desiredSize)
 		{
-			byte[] photoBytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
+            string imgPath = GetImagePath(imageGuid);
 
-			string imgPath = GetImagePath(imageGuid);
-			if (string.IsNullOrEmpty(imgPath))
-			{
-				return null;
-			}
+            return await GetImageBytes(imgPath, desiredSize);
+		}
 
-			using (var file = new FileStream(imgPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
-			{
-				photoBytes = new byte[file.Length];
-				await file.ReadAsync(photoBytes, 0, (int)file.Length);
-			}
-				//using (var fs = new FileStream(imgPath, FileMode.Open, useAsync:true))
-				//{
-				//    //settings.Add("quality", quality.ToString());
-				//    ImageBuilder.Current.Build(fs, bStream, settings);
-				//}
-				//resized = outStream.ToArray();
+        public async Task<byte[]> GetImageBytes(Guid folderGuid, Guid imageGuid, ImageManager.DataModel.ImageModel.ImageSize desiredSize)
+        {
+            string imgPath = GetImagePath(folderGuid, imageGuid);
 
-			byte[] outBytes = null;
+            return await GetImageBytes(imgPath, desiredSize);
+        }
 
-			if (photoBytes != null && photoBytes.Length > 0)
-			{
-				ImageFormat format = ImageFormat.Jpeg;
-				Size size = new Size(150, 150);
-				int quality = 70;
-				bool resize = true;
 
-				switch (desiredSize)
-				{
-					case ImageModel.ImageSize.Thumbnail:
-						size = new Size(45,45);
-						quality = 50;
-						break;
-					case ImageModel.ImageSize.Original:
-						resize = false;
-						quality= 100;
-						break;
-					default:
-						size = new Size(500, 500);
-					break;
-				}
+        private async Task<byte[]> GetImageBytes(string imgPath, ImageManager.DataModel.ImageModel.ImageSize desiredSize)
+        {
+            byte[] photoBytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
+            if (string.IsNullOrEmpty(imgPath))
+            {
+                return null;
+            }
+            using (var file = new FileStream(imgPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+            {
+                photoBytes = new byte[file.Length];
+                await file.ReadAsync(photoBytes, 0, (int)file.Length);
+            }
+            //using (var fs = new FileStream(imgPath, FileMode.Open, useAsync:true))
+            //{
+            //    //settings.Add("quality", quality.ToString());
+            //    ImageBuilder.Current.Build(fs, bStream, settings);
+            //}
+            //resized = outStream.ToArray();
 
-				using (var inStream = new MemoryStream(photoBytes))
-				{
-					using (var outStream = new MemoryStream())
-					{
-						using (ImageFactory imageFactory = new ImageFactory())
-						{
-							// Load, resize, set the format and quality and save an image.
+            byte[] outBytes = null;
+
+            if (photoBytes != null && photoBytes.Length > 0)
+            {
+                ImageFormat format = ImageFormat.Jpeg;
+                Size size = new Size(150, 150);
+                int quality = 70;
+                bool resize = true;
+
+                switch (desiredSize)
+                {
+                    case ImageModel.ImageSize.Thumbnail:
+                        size = new Size(45, 45);
+                        quality = 50;
+                        break;
+                    case ImageModel.ImageSize.Original:
+                        resize = false;
+                        quality = 100;
+                        break;
+                    default:
+                        size = new Size(500, 500);
+                        break;
+                }
+
+                using (var inStream = new MemoryStream(photoBytes))
+                {
+                    using (var outStream = new MemoryStream())
+                    {
+                        using (ImageFactory imageFactory = new ImageFactory())
+                        {
+                            // Load, resize, set the format and quality and save an image.
                             //imageFactory.Load(inStream)
                             //    .Format(format)
                             //    .Quality(quality)
@@ -131,21 +149,19 @@ namespace ImageManager.DataAccess
                                 fact.Constrain(size);
                             }
                             fact.Save(outStream);
-						}
+                        }
 
-						// Do something with the stream.
+                        // Do something with the stream.
                         outStream.Position = 0;
-						outBytes = new Byte[outStream.Length];
-						await outStream.ReadAsync(outBytes, 0, (int)outStream.Length);
+                        outBytes = new Byte[outStream.Length];
+                        await outStream.ReadAsync(outBytes, 0, (int)outStream.Length);
                         return outBytes;
 
-					}
-				}
-			}
+                    }
+                }
+            }
             return null;
-		}
-
-
+        }
 		public string GetImagePath(Guid id)
 		{
 			var img = _ImageList.FirstOrDefault(i => i.Id == id);
@@ -154,6 +170,19 @@ namespace ImageManager.DataAccess
 			}
 			return string.Empty;
 		}
+
+        private string GetImagePath(Guid folderGuid, Guid imageGuid)
+        {
+            var folder = _FolderList.FirstOrDefault(f => f.Id == folderGuid);
+            if (folder != null)
+            {
+                var img = folder.Images.FirstOrDefault(i=>i.Id == imageGuid);
+                if (img !=null){
+                    return _rootPath + folder.RelativePath + img.FileName;
+                }
+            }
+            return string.Empty;
+        }
 
 		public string MetaData
 		{
@@ -171,38 +200,6 @@ namespace ImageManager.DataAccess
 				return "Error retrieveing Metadata";
 			}
 		}
-
-		//protected override string BuildJsonMetadata()
-		//{
-
-		//    ODataModelBuilder mb = new ODataConventionModelBuilder();
-		//    mb.EntitySet<ImageModel>("Images");
-		//    mb.Namespace = "ImageManager.Models";  // DON'T FORGET THIS! //WebAPIODataWithBreezeConsumer
-			
-		//    var edmModel = mb.GetEdmModel();
-		//    IEnumerable<EdmError> errors;
-		//    String csdl;
-		//    using (var swriter = new StringWriter())
-		//    {
-		//        using (var xwriter = new XmlTextWriter(swriter))
-		//        {
-		//            //edmModel.TryWriteCsdl(xwriter, out errors);
-					
-		//            // CsdlWriter.TryWriteCsdl(edmModel, xwriter, out errors);
-		//            EdmxWriter.TryWriteEdmx(edmModel, xwriter, EdmxTarget.OData, out errors);
-		//            csdl = swriter.ToString();
-
-		//        }
-		//    }
-		//    var xele = XElement.Parse(csdl);
-		//    var ns = xele.Name.Namespace;
-		//    var dataServicesEle = xele.Descendants(ns + "DataServices").First();
-		//    var xDoc = XDocument.Load(dataServicesEle.CreateReader());
-		//    var json = ContextProvider.XDocToJson(xDoc);
-		//    return json;
-		//}
-
-
 
 	}
 }

@@ -8,7 +8,8 @@
     function datacontext($http, common, config, emFactory) {
         var $q = common.$q;
         var EntityQuery = breeze.EntityQuery;
-       
+        var Predicate = breeze.Predicate;
+
 
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(serviceId); //information message
@@ -24,7 +25,8 @@
             getThumbnailURL: getThumbnailURL,
             getImageURL: getImageURL,
             getImageCount: getImageCount,
-            getAllFolders:getAllFolders,
+            getAllFolders: getAllFolders,
+            getFolder:getFolder,
             reset: reset
         };
 
@@ -106,6 +108,45 @@
 
         }
 
+        function getFolder(folderId, forceRemote) {
+            log('Getting Specific Folder');
+            if (_areFoldersLoaded() && !forceRemote) {
+                //get folder from local store
+                return $q.when(getFolderById(folderId));
+            }
+
+            var query = EntityQuery.from("GetFolders")
+                .toType('FolderModel')
+                .inlineCount(true)
+                .take(1 )
+                .expand('images')
+                .using(manager).execute()
+                .to$q(success, _queryFailed);
+
+            return query;
+
+            function getFolderById(id) {
+                //similar to the getAttendees call, but the filter is different
+                var predicate = Predicate.create('id', '==', id);
+                var folders = EntityQuery.from('GetFolders')
+                    .where(predicate)//new call because we are filtering
+                    .take(1)
+                    .expand('images')
+                    .toType('FolderModel')
+                    .using(manager)
+                    .executeLocally();
+                return folders;
+            }
+
+            function success(data) {
+                //log("Retrieved " + data.results.length);
+                _areFoldersLoaded(true); //data loaded, set attendees loaded to true
+                log('Retrieved [FolderName] from remote data source', data.results[0].name, true);//true means show alert on screen
+                return getFolderById(folderId   );
+                //  return data.results;
+            }
+        }
+
         function getAllFolders(forceRemote, page, size, nameFilter) {
             var take = size || 20; //how many to get at a time
             var skip = page ? (page - 1) * size : 0;//how many to skip, if no page defined, start at first page
@@ -125,6 +166,7 @@
                 .toType('FolderModel')
                 .inlineCount(true)
                 .expand('ChildFolders')
+                .expand('Images')
                 .using(manager).execute()
                 .to$q(success, _queryFailed);
 
@@ -145,6 +187,7 @@
                     .skip(skip)//how many to skip before grabbing
                     .orderBy(imageOrderBy)
                     .expand('ChildFolders')
+                    .expand('Images')
                     .toType('FolderModel')
                     .using(manager)
                     .executeLocally();

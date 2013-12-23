@@ -3,18 +3,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-5">
-                    <ul class="list-unstyled list-flow-tight">
-                        <li class="" data-ng-repeat="image in vm.Images" data-ng-click="vm.setCurrentImageIndex($index)">
-                            <!-- " vm.showimage(image)" -->
-
-                            <div class="well well-sm">
-                                <img data-ng-src="{{vm.getImageThumbnail(image)}}" alt="image.fileName" class="img img-thumbnail" />
-                                <!--<button data-ng-click="vm.getImageThumbnail(image)" class="btn btn-default"></button>-->
-                                <!--<img ng-src="{{image.thumbnail}}" />-->
-                                {{image.fileName}}
-                            </div>
-                        </li>
-                    </ul>
+                    <div ng-include="'app/template/ImageListPartial.html'" />
                     <pagination boundary-links="true"
                                 on-select-page="vm.pageChanged(page)"
                                 total-items="vm.imageCount"

@@ -52,7 +52,15 @@ namespace ImageManager.DataModel
         public Guid Id { get; set; }
         public Guid? ParentFolderId { get; set; }
         public string Name { get; set; }
-        public string RelativePath { get; set; }
+        public string RelativePath { get{
+            if (ParentFolder != null)
+            {
+                return ParentFolder.RelativePath + @"\" + ParentFolder.Name + @"\";
+            }
+            return "";
+        }
+            private set { }
+        }
         public virtual FolderModel ParentFolder { get; set; }
         public virtual IList<FolderModel> ChildFolders { get; set; }
         public virtual IList<ImageModel> Images { get; set; }
@@ -88,7 +96,7 @@ namespace ImageManager.DataModel
             var images = dir.GetFiles().Where(f => IsImage(f));
             foreach (var image in images)
             {
-                rtnImage.Add(new ImageModel(image, dir.FullName) { FolderId = this.Id });
+                rtnImage.Add(new ImageModel(image, dir.FullName) { Folder = this});
             }
             return rtnImage;
         }

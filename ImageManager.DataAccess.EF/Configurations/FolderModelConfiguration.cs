@@ -19,7 +19,7 @@ namespace ImageManager.DataAccess.EF.Configurations
                 .HasForeignKey(f => f.ParentFolderId)
                 .WillCascadeOnDelete(true);
             HasMany(f => f.Images)
-                .WithOptional()
+                .WithRequired(i=>i.Folder)
                 .HasForeignKey(i => i.FolderId)
                 .WillCascadeOnDelete(true);
             

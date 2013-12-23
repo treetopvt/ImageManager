@@ -90,7 +90,7 @@ namespace ImageManager.Controllers
             try {
                 log.Info("Getting fullsize image");
 
-                return await GetImage(id, ImageModel.ImageSize.Medium);
+                return await GetImage(Guid.Empty, id, ImageModel.ImageSize.Medium);
             }
             catch (Exception ex)
             {
@@ -100,11 +100,18 @@ namespace ImageManager.Controllers
 
 		}
 
-        private async Task<HttpResponseMessage> GetImage(Guid id,ImageModel.ImageSize size)
+        private async Task<HttpResponseMessage> GetImage(Guid folderGuid, Guid id,ImageModel.ImageSize size)
         {
             var result = new HttpResponseMessage(HttpStatusCode.OK);
             byte[] bytes = null;// _ImageRepository.GetImageThumbnail(id); //use the imageresizer for thumbnails
-            bytes = await _ImageRepository.GetImageBytes(id, size);
+            if (folderGuid == Guid.Empty)
+            {
+                bytes = await _ImageRepository.GetImageBytes(folderGuid, id, size);
+            }
+            else {
+                bytes = await _ImageRepository.GetImageBytes(id, size);
+            }
+
             if (bytes != null)
             {
                 result.Content = new ByteArrayContent(bytes);
@@ -126,7 +133,11 @@ namespace ImageManager.Controllers
         {
             return _ImageRepository.Folders;
         }
-
+        [Queryable]
+        public SingleResult<FolderModel> GetFolderModel([FromODataUri] Guid key)
+        {
+            return SingleResult.Create(_ImageRepository.Folders.Where(f => f.Id == key).AsQueryable());
+        }
         #endregion
 
 
@@ -136,7 +147,7 @@ namespace ImageManager.Controllers
 			try
 			{
 				log.Info("Getting Thumbnail");
-                return await GetImage(id, ImageModel.ImageSize.Thumbnail);
+                return await GetImage(Guid.Empty,id, ImageModel.ImageSize.Thumbnail);
 				//MemoryStream bStream = new MemoryStream();
                 //if (bytes == null)
                 //{
@@ -183,6 +194,21 @@ namespace ImageManager.Controllers
 			}
 		}
 
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetImageThumbnail(Guid id, Guid folderId)
+        {
+            try
+            {
+                log.Info("Getting Thumbnail");
+                return await GetImage(folderId,id, ImageModel.ImageSize.Thumbnail);
+
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error retrieving thumbnail", ex);
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            }
+        }
 		// POST api/<controller>
 		public void Post([FromBody]string value)
 		{

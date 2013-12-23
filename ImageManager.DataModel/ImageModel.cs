@@ -35,6 +35,16 @@ namespace ImageManager.DataModel
         }
 
         public Guid Id { get; set; }
+        private FolderModel _folder;
+        public FolderModel Folder
+        {
+            get { return _folder; }
+            set
+            {
+                this.FolderId = value.Id;
+                _folder = value;
+            }
+        }
         public Guid FolderId { get; set; }
         public string FileName { get; set; }
         public string RelativePath { get; set; }

@@ -264,6 +264,7 @@
     <Content Include="app\common\spinner.js" />
     <Content Include="app\folders\folders.html" />
     <Content Include="app\folders\folders.js" />
+    <Content Include="app\template\ImageListPartial.html" />
     <Content Include="app\template\pagination\pager.html" />
     <Content Include="app\template\pagination\pagination.html" />
     <Content Include="app\config.exceptionHandler.js" />
